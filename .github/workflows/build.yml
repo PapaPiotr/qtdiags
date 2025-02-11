@@ -31,8 +31,8 @@ jobs:
           pip install pyinstaller
           pip install -r requirements.txt
 
-      - name: Build binary (Linux)
-        if: runner.os != 'Linux'
+      - name: Build binary (Linux/macOS)
+        if: runner.os != 'Windows'
         run: |
           pyinstaller --windowed --onefile --add-data "resources:resources" main.py
 
