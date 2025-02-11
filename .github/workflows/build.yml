@@ -12,6 +12,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
+        arch: [default]
       include:
         - os: macos-latest
           arch: x86_64
