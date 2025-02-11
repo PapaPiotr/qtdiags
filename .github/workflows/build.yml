@@ -9,8 +9,9 @@ on:
 jobs:
   build:
     name: Build Binaries
-    matrix:
-      os: [ubuntu-latest, windows-latest, macos-latest]
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -28,11 +29,13 @@ jobs:
           pip install pyinstaller
           pip install -r requirements.txt
 
-      - name: Build binary Linux
+      - name: Build binary (Linux & Mac)
         if: runner.os != 'Windows'
         run: |
           pyinstaller --windowed --onefile --add-data "resources:resources" main.py
-        else:
+
+      - name: Build binary (Windows)
+        if: runner.os == 'Windows'
         run: |
           pyinstaller --windowed --onefile --add-data "resources;resources" main.py
 
