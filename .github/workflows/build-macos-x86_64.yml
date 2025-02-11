@@ -1,0 +1,48 @@
+name: Build macOS x86_64 Executable
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build macOS x86_64 Binary
+    runs-on: macos-latest
+
+    strategy:
+      matrix:
+        arch: [x86_64]  # Spécifie l'architecture pour macOS x86_64
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies (macOS)
+        run: |
+          arch -${{ matrix.arch }} /bin/bash -c "python -m pip install --upgrade pip"
+          arch -${{ matrix.arch }} /bin/bash -c "pip install pyinstaller"
+          arch -${{ matrix.arch }} /bin/bash -c "pip install -r requirements.txt"
+
+      - name: Build binary (macOS x86_64)
+        run: |
+          arch -${{ matrix.arch }} /bin/bash -c 'pyinstaller --windowed --onefile --add-data "resources:resources" main.py'
+
+      - name: Verify dist contents
+        run: |
+          ls -al dist/  # Vérifie que les fichiers sont générés
+
+      - name: Upload binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: binaries-macos-x86_64
+          path: dist/*
+
